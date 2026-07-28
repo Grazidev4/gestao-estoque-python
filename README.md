@@ -43,4 +43,4 @@ O sistema conta com um layout moderno, responsivo e intuitivo, permitindo a gest
 
 1. **Clone este repositório:**
    ```bash
-   git clone [https://github.com/Grazidev4/gestao-estoque-python.git](https://github.com/Grazidev4/gestao-estoque-python.git)
+   git clone https://github.com/Grazidev4/gestao-estoque-python.git
