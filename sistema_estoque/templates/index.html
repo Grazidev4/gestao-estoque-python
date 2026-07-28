@@ -1,0 +1,219 @@
+<!DOCTYPE html>
+<html lang="pt-br">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Meu Controle de Estoque</title>
+    
+    <style>
+        body { 
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif; 
+            background-color: #f4f6f9; 
+            margin: 0;
+            padding: 40px 20px;
+            color: #333;
+        }
+
+        .container {
+            max-width: 850px;
+            margin: 0 auto;
+        }
+
+        /* Título Centralizado */
+        h1 { 
+            color: #1a1a1a; 
+            margin-bottom: 25px;
+            font-size: 28px;
+            text-align: center;
+        }
+
+        h2 { 
+            color: #2c3e50; 
+            font-size: 20px;
+            margin-top: 0;
+            margin-bottom: 15px;
+        }
+
+        form { 
+            background: #ffffff; 
+            padding: 24px; 
+            border-radius: 8px; 
+            margin-bottom: 30px; 
+            box-shadow: 0 4px 6px rgba(0,0,0,0.05); 
+        }
+
+        .form-group {
+            display: flex;
+            gap: 10px;
+            margin-bottom: 15px;
+        }
+
+        input { 
+            padding: 10px 12px; 
+            border: 1px solid #ccc; 
+            border-radius: 6px;
+            font-size: 14px;
+            box-sizing: border-box; 
+            outline: none;
+        }
+
+        input[name="nome"] { flex: 2; }
+        input[name="preco"] { flex: 1; }
+
+        input:focus { border-color: #be1a1a; }
+
+        button[type="submit"] { 
+            background-color: #be1a1a; 
+            color: white; 
+            border: none; 
+            padding: 12px; 
+            cursor: pointer; 
+            width: 100%; 
+            border-radius: 6px; 
+            font-weight: bold; 
+            font-size: 15px;
+        }
+
+        button[type="submit"]:hover { background-color: #9e1414; }
+
+        /* Barra de Pesquisa */
+        .busca-container {
+            background: #ffffff;
+            padding: 15px 20px;
+            border-radius: 8px;
+            margin-bottom: 20px;
+            box-shadow: 0 4px 6px rgba(0,0,0,0.05);
+            display: flex;
+            gap: 10px;
+        }
+
+        .busca-container input { flex: 1; }
+
+        .btn-busca {
+            background-color: #2c3e50;
+            color: white;
+            border: none;
+            padding: 10px 18px;
+            border-radius: 6px;
+            cursor: pointer;
+            font-weight: bold;
+            text-decoration: none;
+            display: inline-block;
+            line-height: 20px;
+        }
+
+        .btn-limpar {
+            background-color: #6c757d;
+            color: white;
+            border: none;
+            padding: 10px 18px;
+            border-radius: 6px;
+            cursor: pointer;
+            font-weight: bold;
+            text-decoration: none;
+            display: inline-block;
+            line-height: 20px;
+        }
+
+        /* Tabela */
+        table { 
+            width: 100%; 
+            border-collapse: collapse; 
+            background: #ffffff; 
+            border-radius: 8px;
+            overflow: hidden;
+            box-shadow: 0 4px 6px rgba(0,0,0,0.05); 
+        }
+
+        th, td { 
+            padding: 14px 16px; 
+            text-align: left; 
+            border-bottom: 1px solid #eee;
+        }
+
+        th { 
+            background-color: #be1a1a; 
+            color: white; 
+            font-weight: 600;
+        }
+
+        .btn-del { 
+            background-color: #ffeef0;
+            color: #dc3545; 
+            text-decoration: none; 
+            font-weight: bold; 
+            padding: 6px 12px;
+            border-radius: 4px;
+            font-size: 13px;
+        }
+
+        .btn-del:hover {
+            background-color: #dc3545;
+            color: white;
+        }
+
+        .vazio { text-align: center; color: #777; font-style: italic; }
+    </style>
+</head>
+<body>
+
+    <div class="container">
+        <h1>Sistema de Gestão de Estoque</h1>
+
+        <!-- FORMULÁRIO DE CADASTRO -->
+        <form action="/cadastrar" method="POST">
+            <h2>Cadastrar Produto</h2>
+            <div class="form-group">
+                <input type="text" name="nome" placeholder="Nome do produto" required>
+                <input type="number" step="0.01" name="preco" placeholder="Preço (R$)" required>
+            </div>
+            <button type="submit">Salvar Produto</button>
+        </form>
+
+        <!-- BARRA DE PESQUISA -->
+        <h2>Produtos Cadastrados</h2>
+        <form action="/" method="GET" class="busca-container">
+            <input type="text" name="busca" placeholder="Pesquisar produto pelo nome..." value="{{ termo }}">
+            <button type="submit" class="btn-busca">Buscar</button>
+            {% if termo %}
+                <a href="/" class="btn-limpar">Limpar</a>
+            {% endif %}
+        </form>
+
+        <!-- TABELA -->
+        <table>
+            <thead>
+                <tr>
+                    <th style="width: 10%;">#</th>
+                    <th style="width: 50%;">Nome</th>
+                    <th style="width: 25%;">Preço</th>
+                    <th style="width: 15%;">Ações</th>
+                </tr>
+            </thead>
+            <tbody>
+                {% for item in produtos %}
+                <tr>
+                    <td>{{ loop.index0 }}</td>
+                    <td><strong>{{ item.nome }}</strong></td>
+                    <td>R$ {{ "%.2f"|format(item.preco) }}</td>
+                    <td>
+                        <a href="/deletar/{{ loop.index0 }}" class="btn-del">Remover</a>
+                    </td>
+                </tr>
+                {% else %}
+                <tr>
+                    <td colspan="4" class="vazio">
+                        {% if termo %}
+                            Nenhum produto encontrado para "{{ termo }}".
+                        {% else %}
+                            Nenhum produto cadastrado no momento.
+                        {% endif %}
+                    </td>
+                </tr>
+                {% endfor %}
+            </tbody>
+        </table>
+    </div>
+
+</body>
+</html>
